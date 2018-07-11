@@ -17,7 +17,10 @@
   same/2,
   valid_time/1,
   old_enough/1,
-  right_age/1
+  right_age/1,
+  heh_fine/0,
+  oh_god/1,
+  help_me/1
 ]).
 
 %% パターンマッチ
@@ -32,9 +35,9 @@ greet(_, Name) ->
 %% 関数宣言は1つの大きな文として捉えられる
 
 %% Head関数作成
-head([H|_]) -> H.
+head([H | _]) -> H.
 %% 2つめを取得 // これは実際は再帰的にやる方が良いよ５章でやるよ
-second([_, H|_]) -> H.
+second([_, H | _]) -> H.
 
 %% 束縛する変数
 %% Erlangでは新しい値が束縛されている値と同じでない限りエラーになる
@@ -45,9 +48,9 @@ same(_, _) ->
   false.
 
 %% 日付の表示
-valid_time({Date = {Y,M,D}, Time = {H,Min,S}}) ->
-  io:format("The Date tuple (~p) says today is: ~p/~p/~p,~n", [Date,Y,M,D]),
-  io:format("The time tuple (~p) indicates: ~p/~p/~p.~n", [Time,H,Min,S]);
+valid_time({Date = {Y, M, D}, Time = {H, Min, S}}) ->
+  io:format("The Date tuple (~p) says today is: ~p/~p/~p,~n", [Date, Y, M, D]),
+  io:format("The time tuple (~p) indicates: ~p/~p/~p.~n", [Time, H, Min, S]);
 valid_time(_) ->
   io:format("Stop feeding me wrong data!~n").
 
@@ -71,3 +74,34 @@ right_age(X) when X >= 16, X =< 104 ->
 right_age(_) ->
   false.
 
+%% IF節
+heh_fine() ->
+  if 1 =:= 1 ->
+    works
+  end,
+  if 1 =:= 2; 1 =:= 1 ->
+    works
+  end,
+  %% 以下は2つの条件どちらも必ずfalseになるのでコンパイルエラーになる(ガードと同じ理由)
+  if 1 =:= 2, 1 =:= 1 ->
+    fails
+  end.
+
+oh_god(N) ->
+  if N =:= 2 -> migth_succeed;
+    true -> always_does %% This is Erlang's if's 'else!'
+  end.
+
+%% 複数のガードを使う !!! パターンマッチの方が好ましい
+help_me(Animal) ->
+  Talk = if Animal == cat -> "meow";
+           Animal == beef -> "mooo";
+           Animal == dog -> "bark";
+           Animal == tree -> "bark";
+           true -> "fgdadfgna"
+         end,
+  {Animal, "says " ++ Talk ++ "!"}.
+
+%% Erlangのif-elseはelseをtrueで表現してそれ以外全てをで表現する
+%% あまりこれは推奨されない(わかりづらいし)
+%% 条件を明記するのが好ましい P41.参照
