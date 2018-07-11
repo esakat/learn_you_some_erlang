@@ -10,7 +10,15 @@
 -author("tom_red").
 
 %% API
--export([greet/2, head/1, second/1, same/2, valid_time/1]).
+-export([
+  greet/2,
+  head/1,
+  second/1,
+  same/2,
+  valid_time/1,
+  old_enough/1,
+  right_age/1
+]).
 
 %% パターンマッチ
 %% io:formatではチルダで文字列置き換えできるよ
@@ -50,3 +58,16 @@ valid_time(_) ->
 %%13> chap3:valid_time({{2018,07,04},{09,0}}).
 %%Stop feeding me wrong data!
 %%ok
+
+%% ガード
+%% パターンマッチで捕まえきれない表現ができる(値の範囲でのマッチとか)
+%% 成功時はtrueで返すことが必須
+%% Erlangは純粋関数型言語ではないので、ガード内でユーザ定義の関数は使えないよ(副作用怖い)
+old_enough(X) when X >= 16 -> true;
+old_enough(_) -> false.
+
+right_age(X) when X >= 16, X =< 104 ->
+  true;
+right_age(_) ->
+  false.
+
